@@ -223,7 +223,7 @@ void initVao(void)
 
 	obj = loadAssImp("", "ombrellone.obj", Model3D);
 	nmeshes = Model3D.size();
-	createObjectFromObj(Model3D, "Ombrellone", nmeshes, vec3(70.0, 2.5, 105.0), vec3(0.5, 0.5, 0.5), 0.0, vec3(1, 1, 1));
+	createObjectFromObj(Model3D, "Ombrellone", nmeshes, vec3(70.0, 4, 105.0), vec3(0.5, 0.5, 0.5), 0.0, vec3(1, 1, 1));
 	Model3D.clear();
 }
 
