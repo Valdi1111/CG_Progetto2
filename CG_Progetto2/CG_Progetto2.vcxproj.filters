@@ -122,9 +122,6 @@
     <ClInclude Include="GestioneMeshesAssImp.h">
       <Filter>File di intestazione</Filter>
     </ClInclude>
-    <ClInclude Include="Materiali_Base.h">
-      <Filter>File di intestazione</Filter>
-    </ClInclude>
     <ClInclude Include="ShaderMaker.h">
       <Filter>File di intestazione</Filter>
     </ClInclude>

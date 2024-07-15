@@ -49,7 +49,7 @@ int idTex, texture, texture1, texture2, cubemapTexture;
 float raggio_sfera = 2.5;
 vec3 asse = vec3(0.0, 1.0, 0.0);
 int selected_obj = 0;
-float cameraSpeed = 1.0;
+float cameraSpeed = 0.5;
 vector<Mesh> Scena, Snowman;
 LightPoint light;
 
@@ -146,26 +146,30 @@ void illuminationMenuHandler(int option) {
 
 void buildOpenGLMenu()
 {
+	// Aggiungo il menu material
 	int materialSubMenu = glutCreateMenu(materialMenuHandler);
-	glutAddMenuEntry(materials[MaterialType::EMERALD].name.c_str(), MaterialType::EMERALD);
-	glutAddMenuEntry(materials[MaterialType::BRASS].name.c_str(), MaterialType::BRASS);
-	glutAddMenuEntry(materials[MaterialType::SLATE].name.c_str(), MaterialType::SLATE);
-	glutAddMenuEntry(materials[MaterialType::YELLOW].name.c_str(), MaterialType::YELLOW);
+	for (size_t i = 0; i < materials.size(); i++)
+	{
+		glutAddMenuEntry(materials[i].name.c_str(), i);
+	}
 
+	// Aggiungo il menu shader
 	int shaderSubMenu = glutCreateMenu(shaderMenuHandler);
-	glutAddMenuEntry(shaders[ShaderType::NO_SHADER].name.c_str(), ShaderType::NO_SHADER);
-	glutAddMenuEntry(shaders[ShaderType::TEXTURE].name.c_str(), ShaderType::TEXTURE);
-	glutAddMenuEntry(shaders[ShaderType::PHONG_SHADING].name.c_str(), ShaderType::PHONG_SHADING);
-	glutAddMenuEntry(shaders[ShaderType::INTERPOLATE_SHADING].name.c_str(), ShaderType::INTERPOLATE_SHADING);
+	for (size_t i = 0; i < shaders.size(); i++)
+	{
+		glutAddMenuEntry(shaders[i].name.c_str(), i);
+	}
 
+	// Aggiungo il menu illumination
 	int illuminationSubMenu = glutCreateMenu(illuminationMenuHandler);
-	glutAddMenuEntry(illuminations[IlluminationType::NO_ILLUMINATION].name.c_str(), IlluminationType::NO_ILLUMINATION);
-	glutAddMenuEntry(illuminations[IlluminationType::PHONG].name.c_str(), IlluminationType::PHONG);
-	glutAddMenuEntry(illuminations[IlluminationType::BLINN].name.c_str(), IlluminationType::BLINN);
+	for (size_t i = 0; i < illuminations.size(); i++)
+	{
+		glutAddMenuEntry(illuminations[i].name.c_str(), i);
+	}
 
 	glutCreateMenu(mainMenuHandler); // richiama mainMenuHandler() alla selezione di una voce menu
 	glutAddMenuEntry("Options", -1); // -1 significa che non si vuole gestire questa riga
-	glutAddMenuEntry("", -1);
+	glutAddMenuEntry("---------------", -1);
 	glutAddSubMenu("Material", materialSubMenu);
 	glutAddSubMenu("Shader", shaderSubMenu);
 	glutAddSubMenu("Illumination", illuminationSubMenu);
@@ -231,10 +235,10 @@ void drawScene(void)
 	{
 		for (size_t k = 0; k < ScenaObj[j].size(); k++)
 		{
-			programC->switchScenaObject(ScenaObj[j][k].ModelM, ScenaObj[j][k].sceltaVS, ScenaObj[j][k].illumination);
+			programC->switchScenaObject(ScenaObj[j][k].ModelM, ScenaObj[j][k].shader, ScenaObj[j][k].illumination);
 			programC->switchMaterial(ScenaObj[j][k].materiale);
-
 			glBindVertexArray(ScenaObj[j][k].VAO);
+
 			glDrawElements(GL_TRIANGLES, (ScenaObj[j][k].indici.size()) * sizeof(GLuint), GL_UNSIGNED_INT, 0);
 
 			glBindVertexArray(0);

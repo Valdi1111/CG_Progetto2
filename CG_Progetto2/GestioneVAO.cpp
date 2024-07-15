@@ -19,6 +19,7 @@ void crea_VAO_Vector(Mesh* mesh)
 	// Adesso carico il VBO dei colori nel layer 2
 	glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, 0, (void*)0);
 	glEnableVertexAttribArray(1);
+
 	// Genero , rendo attivo, riempio il VBO delle normali
 	glGenBuffers(1, &mesh->VBO_normali);
 	glBindBuffer(GL_ARRAY_BUFFER, mesh->VBO_normali);
@@ -26,6 +27,7 @@ void crea_VAO_Vector(Mesh* mesh)
 	// Adesso carico il VBO delle NORMALI nel layer 2
 	glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
 	glEnableVertexAttribArray(2);
+
 	// Genero , rendo attivo, riempio il VBO delle texture
 	glGenBuffers(1, &mesh->VBO_coord_texture);
 	glBindBuffer(GL_ARRAY_BUFFER, mesh->VBO_coord_texture);
@@ -33,6 +35,7 @@ void crea_VAO_Vector(Mesh* mesh)
 	// Adesso carico il VBO delle NORMALI nel layer 2
 	glVertexAttribPointer(3, 2, GL_FLOAT, GL_FALSE, 0, (void*)0);
 	glEnableVertexAttribArray(3);
+
 	// EBO di tipo indici
 	glGenBuffers(1, &mesh->EBO_indici);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mesh->EBO_indici);
@@ -65,6 +68,14 @@ void crea_VAO_Vector_MeshObj(MeshObj* mesh)
 	// Adesso carico il VBO delle NORMALI nel layer 2
 	glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
 	glEnableVertexAttribArray(2);
+
+	// Genero , rendo attivo, riempio il VBO delle texture
+	glGenBuffers(1, &mesh->VBO_coord_texture);
+	glBindBuffer(GL_ARRAY_BUFFER, mesh->VBO_coord_texture);
+	glBufferData(GL_ARRAY_BUFFER, mesh->texCoords.size() * sizeof(vec2), mesh->texCoords.data(), GL_STATIC_DRAW);
+	// Adesso carico il VBO delle NORMALI nel layer 2
+	glVertexAttribPointer(3, 2, GL_FLOAT, GL_FALSE, 0, (void*)0);
+	glEnableVertexAttribArray(3);
 
 	// EBO di tipo indici
 	glGenBuffers(1, &mesh->EBO_indici);

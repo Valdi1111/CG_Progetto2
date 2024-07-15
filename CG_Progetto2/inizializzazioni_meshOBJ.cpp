@@ -1,8 +1,7 @@
-#include "ShaderMaker.h"
+﻿#include "ShaderMaker.h"
 #include "Gestione_VAO.h"
 #include "geometria.h"
 #include "Strutture.h"
-#include "Materiali_Base.h"
 #include "GestioneMeshesAssImp.h"
 #include "GestioneTexture.h"
 #include "Program.h"
@@ -57,6 +56,7 @@ void clearObject(Mesh& oggetto) {
 	oggetto.texCoords.clear();
 	oggetto.sceltaVS = 0;
 }
+
 // Crea l'oggetto dal file obj
 void createObjectFromObj(vector<MeshObj> Model3D, string nome, int nmeshes, vec3 posizione, vec3 scala, float rad, vec3 rotation) {
 	// Per ogni mesh dell'oggetto 3D creo un modello
@@ -76,10 +76,11 @@ void createObjectFromObj(vector<MeshObj> Model3D, string nome, int nmeshes, vec3
 		vec3 ambiental = Model3D[i].materiale.ambient;
 		vec3 difusivo = Model3D[i].materiale.diffuse;
 		vec3 speculare = Model3D[i].materiale.specular;
+		float shininess = Model3D[i].materiale.shininess;
 		Model3D[i].materiale.ambient = ambiental;
 		Model3D[i].materiale.diffuse = difusivo;
 		Model3D[i].materiale.specular = speculare;
-		Model3D[i].materiale.shininess = red_plastic_shininess;
+		Model3D[i].materiale.shininess = shininess;
 		// Imposto lo shader
 		Model3D[i].sceltaVS = 3;
 	}
@@ -132,7 +133,7 @@ void initVao(void)
 	oggetto.nome = "Interpolate Shading - Blinn-Phong Illumination";
 	oggetto.shader = ShaderType::INTERPOLATE_SHADING;
 	oggetto.illumination = IlluminationType::BLINN;
-	oggetto.material = MaterialType::EMERALD;
+	oggetto.material = MaterialType::BRASS;
 	Scena.push_back(oggetto);
 	clearObject(oggetto);
 
@@ -145,7 +146,7 @@ void initVao(void)
 	oggetto.nome = "Phong Shading - Phong Illumination";
 	oggetto.shader = ShaderType::PHONG_SHADING;
 	oggetto.illumination = IlluminationType::PHONG;
-	oggetto.material = MaterialType::EMERALD;
+	oggetto.material = MaterialType::SLATE;
 	Scena.push_back(oggetto);
 	clearObject(oggetto);
 
@@ -185,8 +186,8 @@ void initVao(void)
 	crea_sfera(&oggetto, vec4(1.0, 0.0, 1.0, 1.0));
 	crea_VAO_Vector(&oggetto);
 	oggetto.Model = mat4(1.0);
-	oggetto.Model = translate(oggetto.Model, vec3(1.0, 1.0, 1.0));
-	oggetto.Model = scale(oggetto.Model, vec3(50.0, 50.0, 50.0));
+	oggetto.Model = translate(oggetto.Model, vec3(0.0, 50.0, 0.0));
+	oggetto.Model = scale(oggetto.Model, vec3(10.0, 10.0, 10.0));
 	oggetto.nome = "Sole";
 	oggetto.shader = ShaderType::TEXTURE;
 	oggetto.sceltaVS = loadTexture("8k_sun.jpg", 0);
@@ -205,10 +206,24 @@ void initVao(void)
 	Scena.push_back(oggetto);
 	clearObject(oggetto);
 
-	// Star Destroyer
-	obj = loadAssImp("starDestroyer/ombrellone.obj", Model3D);
+	obj = loadAssImp("fischl/", "fischl.pmx", Model3D);
 	nmeshes = Model3D.size();
-	createObjectFromObj(Model3D, "Star Destroyer", nmeshes, vec3(35.0, 35.0, 100.0), vec3(0.5, 0.5, 0.5), 0.0, vec3(1, 1, 1));
+	createObjectFromObj(Model3D, "Fischl", nmeshes, vec3(40.0, 2.5, 105.0), vec3(0.5, 0.5, 0.5), 180.0, vec3(0, 1, 0));
+	Model3D.clear();
+
+	obj = loadAssImp("barbara/", "barbara.pmx", Model3D);
+	nmeshes = Model3D.size();
+	createObjectFromObj(Model3D, "Barbara", nmeshes, vec3(50.0, 2.5, 105.0), vec3(0.5, 0.5, 0.5), 180.0, vec3(0, 1, 0));
+	Model3D.clear();
+
+	obj = loadAssImp("lumine/", "lumine.pmx", Model3D);
+	nmeshes = Model3D.size();
+	createObjectFromObj(Model3D, "Lumine", nmeshes, vec3(60.0, 2.5, 105.0), vec3(0.5, 0.5, 0.5), 180.0, vec3(0, 1, 0));
+	Model3D.clear();
+
+	obj = loadAssImp("", "ombrellone.obj", Model3D);
+	nmeshes = Model3D.size();
+	createObjectFromObj(Model3D, "Ombrellone", nmeshes, vec3(70.0, 2.5, 105.0), vec3(0.5, 0.5, 0.5), 0.0, vec3(1, 1, 1));
 	Model3D.clear();
 }
 
@@ -229,58 +244,70 @@ void initCameraProjection(void)
 
 void initIlluminazione()
 {
-	light.position = { 1.0, 1.0, 1.0 };
+	light.position = { 0.0, 50.0, 0.0 };
 	light.color = { 1.0, 1.0, 1.0 };
 	light.power = 1.0f;
 
 	// Setup dei materiali
 	// Materials setup
 	materials.resize(6);
-	materials[MaterialType::RED_PLASTIC].name = "Red Plastic";
-	materials[MaterialType::RED_PLASTIC].ambient = red_plastic_ambient;
-	materials[MaterialType::RED_PLASTIC].diffuse = red_plastic_diffuse;
-	materials[MaterialType::RED_PLASTIC].specular = red_plastic_specular;
-	materials[MaterialType::RED_PLASTIC].shininess = red_plastic_shininess;
+	materials[MaterialType::RED_PLASTIC] = {
+		"Red Plastic",
+		vec3(0.1, 0.0, 0.0),
+		vec3(0.6, 0.1, 0.1),
+		vec3(0.7, 0.6, 0.6),
+		32.0f
+	};
 
-	materials[MaterialType::EMERALD].name = "Emerald";
-	materials[MaterialType::EMERALD].ambient = emerald_ambient;
-	materials[MaterialType::EMERALD].diffuse = emerald_diffuse;
-	materials[MaterialType::EMERALD].specular = emerald_specular;
-	materials[MaterialType::EMERALD].shininess = emerald_shininess;
+	materials[MaterialType::EMERALD] = { 
+		"Emerald", 
+		vec3(0.0215, 0.04745, 0.0215),
+		vec3(0.07568, 0.61424, 0.07568),
+		vec3(0.633, 0.727811, 0.633),
+		78.8f
+	};
 
-	materials[MaterialType::BRASS].name = "Brass";
-	materials[MaterialType::BRASS].ambient = brass_ambient;
-	materials[MaterialType::BRASS].diffuse = brass_diffuse;
-	materials[MaterialType::BRASS].specular = brass_specular;
-	materials[MaterialType::BRASS].shininess = brass_shininess;
+	materials[MaterialType::BRASS] = { 
+		"Brass",
+		vec3(0.1, 0.06, 0.015),
+		vec3(0.78, 0.57, 0.11),
+		vec3(0.99, 0.91, 0.81),
+		27.8f
+	};
 
-	materials[MaterialType::SLATE].name = "Slate";
-	materials[MaterialType::SLATE].ambient = slate_ambient;
-	materials[MaterialType::SLATE].diffuse = slate_diffuse;
-	materials[MaterialType::SLATE].specular = slate_specular;
-	materials[MaterialType::SLATE].shininess = slate_shininess;
+	materials[MaterialType::SLATE] = { 
+		"Slate",
+		vec3(0.02, 0.02, 0.02),
+		vec3(0.1, 0.1, 0.1),
+		vec3(0.4, 0.4, 0.4),
+		1.78125f
+	};
 
-	materials[MaterialType::YELLOW].name = "Yellow";
-	materials[MaterialType::YELLOW].ambient = yellow_ambient;
-	materials[MaterialType::YELLOW].diffuse = yellow_diffuse;
-	materials[MaterialType::YELLOW].specular = yellow_specular;
-	materials[MaterialType::YELLOW].shininess = yellow_shininess;
+	materials[MaterialType::YELLOW] = { 
+		"Yellow",
+		vec3(0.8, 0.8, 0.0),
+		vec3(0.5, 0.5, 0.4),
+		vec3(0.9, 0.9, 0.04),
+		1.78125f
+	};
 
-	materials[MaterialType::NO_MATERIAL].name = "NO_MATERIAL";
-	materials[MaterialType::NO_MATERIAL].ambient = glm::vec3(1, 1, 1);
-	materials[MaterialType::NO_MATERIAL].diffuse = glm::vec3(0, 0, 0);
-	materials[MaterialType::NO_MATERIAL].specular = glm::vec3(0, 0, 0);
-	materials[MaterialType::NO_MATERIAL].shininess = 1.f;
+	materials[MaterialType::NO_MATERIAL] = {
+		"No Material",
+		glm::vec3(1, 1, 1),
+		glm::vec3(0, 0, 0),
+		glm::vec3(0, 0, 0),
+		1.f
+	};
 
 	// Setup degli shader
 	shaders.resize(4);
-	shaders[ShaderType::NO_SHADER].name = "NO SHADER";
-	shaders[ShaderType::TEXTURE].name = "TEXTURE";
-	shaders[ShaderType::PHONG_SHADING].name = "PHONG SHADING";
-	shaders[ShaderType::INTERPOLATE_SHADING].name = "INTERPOLATE SHADING";
+	shaders[ShaderType::NO_SHADER] = { "NO SHADER" };
+	shaders[ShaderType::TEXTURE] = { "TEXTURE" };
+	shaders[ShaderType::PHONG_SHADING] = { "PHONG SHADING" };
+	shaders[ShaderType::INTERPOLATE_SHADING] = { "INTERPOLATE SHADING" };
 
 	illuminations.resize(3);
-	illuminations[IlluminationType::NO_ILLUMINATION].name = "NONE";
-	illuminations[IlluminationType::PHONG].name = "PHONG";
-	illuminations[IlluminationType::BLINN].name = "BLINN";
+	illuminations[IlluminationType::NO_ILLUMINATION] = { "NONE" };
+	illuminations[IlluminationType::PHONG] = { "PHONG" };
+	illuminations[IlluminationType::BLINN] = { "BLINN" };
 }

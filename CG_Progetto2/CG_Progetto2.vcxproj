@@ -172,7 +172,6 @@
     <ClInclude Include="inizializzazioni_meshOBJ.h" />
     <ClInclude Include="Lib.h" />
     <ClInclude Include="GestioneMeshesAssImp.h" />
-    <ClInclude Include="Materiali_Base.h" />
     <ClInclude Include="Program.h" />
     <ClInclude Include="ShaderMaker.h" />
     <ClInclude Include="stb_image.h" />

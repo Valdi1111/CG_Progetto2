@@ -4,11 +4,12 @@
 #include <assimp/scene.h>		// Output data structure
 #include <assimp/postprocess.h> // Post processing flags
 #include "Strutture.h"
+#include "GestioneTexture.h"
 #define Meshdir "Meshes/"
 
-bool loadAssImp(string name, vector<MeshObj>& mymesh)
+bool loadAssImp(string subfolder, string name, vector<MeshObj>& mymesh)
 {
-	string path = Meshdir + name;
+	string path = Meshdir + subfolder + name;
 	Assimp::Importer importer;
 	const aiScene* scene = importer.ReadFile(path, aiProcess_JoinIdenticalVertices | aiProcess_Triangulate | aiProcess_FlipUVs);
 	if (!scene)
@@ -29,10 +30,15 @@ bool loadAssImp(string name, vector<MeshObj>& mymesh)
 		mesh = scene->mMeshes[nm];
 		aiMaterial* material = scene->mMaterials[mesh->mMaterialIndex];
 
+		//aiString texturePath;
+		//if (aiReturn_SUCCESS == material->GetTexture(aiTextureType_DIFFUSE, 0, &texturePath)) {
+		//	string textureFilePath = texturePath.C_Str();
+		//	mymesh[nm].shader = ShaderType::TEXTURE;
+		//	mymesh[nm].sceltaVS = loadTexture(Meshdir + subfolder + b, 0, false);
+		//}
 		aiColor3D color;
 		float value;
 		// Read mtl file vertex data
-
 		if (aiReturn_SUCCESS == material->Get(AI_MATKEY_COLOR_AMBIENT, color))
 		{
 			mymesh[nm].materiale.ambient = glm::vec3(color.r, color.g, color.b);
@@ -48,6 +54,7 @@ bool loadAssImp(string name, vector<MeshObj>& mymesh)
 		}
 		else
 		{
+			printf("Errore in diffuse \n");
 			mymesh[nm].materiale.diffuse = glm::vec3(1.0, 0.2, 0.1);
 		}
 
@@ -55,19 +62,19 @@ bool loadAssImp(string name, vector<MeshObj>& mymesh)
 		{
 			mymesh[nm].materiale.specular = glm::vec3(color.r, color.g, color.b);
 		}
-
 		else
 		{
 			printf("Errore in specular \n");
 			mymesh[nm].materiale.specular = glm::vec3(0.5, 0.5, 0.5);
 		}
+
 		if (aiReturn_SUCCESS == material->Get(AI_MATKEY_SHININESS_STRENGTH, value))
 		{
 			mymesh[nm].materiale.shininess = value;
 		}
 		else
 		{
-			// printf("Errore in shininess \n");
+			printf("Errore in shininess \n");
 			mymesh[nm].materiale.shininess = 50.0f;
 		}
 

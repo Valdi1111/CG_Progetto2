@@ -1,3 +1,3 @@
 #include "Strutture.h"
 
-bool loadAssImp(string name, vector<MeshObj>& mesh);
+bool loadAssImp(string subfolder, string name, vector<MeshObj>& mesh);
